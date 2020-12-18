@@ -207,15 +207,29 @@ public class XPathParser {
     return xnodes;
   }
 
+  /**
+   * 解析返回node结点
+   * @param expression /configuration
+   * @return
+   */
   public XNode evalNode(String expression) {
+    //传入的资源路径创建的document
     return evalNode(document, expression);
   }
 
+  /**
+   *
+   * @param root 起始结点
+   * @param expression /configuration
+   * @return
+   */
   public XNode evalNode(Object root, String expression) {
+    //将configuration结点解析成node返回
     Node node = (Node) evaluate(expression, root, XPathConstants.NODE);
     if (node == null) {
       return null;
     }
+    //将configuration结点的node当成下一次解析的root结点
     return new XNode(this, node, variables);
   }
 

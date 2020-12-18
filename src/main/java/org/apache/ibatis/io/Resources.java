@@ -118,13 +118,14 @@ public class Resources {
 
   /**
    * Returns a resource on the classpath as a Properties object
-   *
+   * 通过资源路径加载 Properties
    * @param resource The resource to find
    * @return The resource
    * @throws java.io.IOException If the resource cannot be found or read
    */
   public static Properties getResourceAsProperties(String resource) throws IOException {
     Properties props = new Properties();
+    //获取文件流
     try (InputStream in = getResourceAsStream(resource)) {
       props.load(in);
     }

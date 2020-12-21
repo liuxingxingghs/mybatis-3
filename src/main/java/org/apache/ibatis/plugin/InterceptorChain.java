@@ -23,7 +23,9 @@ import java.util.List;
  * @author Clinton Begin
  */
 public class InterceptorChain {
-
+  /**
+   * 拦截器集合
+   */
   private final List<Interceptor> interceptors = new ArrayList<>();
 
   public Object pluginAll(Object target) {
@@ -33,6 +35,10 @@ public class InterceptorChain {
     return target;
   }
 
+  /**
+   * 拦截器集合
+   * @param interceptor
+   */
   public void addInterceptor(Interceptor interceptor) {
     interceptors.add(interceptor);
   }

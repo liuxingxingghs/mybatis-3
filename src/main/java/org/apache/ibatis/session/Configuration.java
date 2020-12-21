@@ -825,6 +825,10 @@ public class Configuration {
     return sqlFragments;
   }
 
+  /**
+   * 设置到拦截器集合
+   * @param interceptor
+   */
   public void addInterceptor(Interceptor interceptor) {
     interceptorChain.addInterceptor(interceptor);
   }

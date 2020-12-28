@@ -39,17 +39,30 @@ public class DynamicContext {
   }
 
   private final ContextMap bindings;
+  /**
+   * 拼接
+   */
   private final StringJoiner sqlBuilder = new StringJoiner(" ");
   private int uniqueNumber = 0;
 
+  /**
+   * 动态sql 上下文
+   * @param configuration 配置
+   * @param parameterObject 参数
+   */
   public DynamicContext(Configuration configuration, Object parameterObject) {
+
     if (parameterObject != null && !(parameterObject instanceof Map)) {
+      //设置元数据
       MetaObject metaObject = configuration.newMetaObject(parameterObject);
+      //从类型注册器中查询 是否存在类型注册器
       boolean existsTypeHandler = configuration.getTypeHandlerRegistry().hasTypeHandler(parameterObject.getClass());
       bindings = new ContextMap(metaObject, existsTypeHandler);
     } else {
+      //设置空
       bindings = new ContextMap(null, false);
     }
+    //设置参数 key = _parameter   key = _databaseId
     bindings.put(PARAMETER_OBJECT_KEY, parameterObject);
     bindings.put(DATABASE_ID_KEY, configuration.getDatabaseId());
   }

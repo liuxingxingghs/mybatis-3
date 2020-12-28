@@ -637,6 +637,11 @@ public class Configuration {
     return getDefaultScriptingLanguageInstance();
   }
 
+  /**
+   * 创建元数据对象
+   * @param object
+   * @return
+   */
   public MetaObject newMetaObject(Object object) {
     return MetaObject.forObject(object, objectFactory, objectWrapperFactory, reflectorFactory);
   }
@@ -664,20 +669,33 @@ public class Configuration {
     return newExecutor(transaction, defaultExecutorType);
   }
 
+  /**
+   *  新建执行器
+   * @param transaction
+   * @param executorType
+   * @return
+   */
   public Executor newExecutor(Transaction transaction, ExecutorType executorType) {
+    //如果为空 那么选取默认值 防止 defaultExecutorType 设置为空
     executorType = executorType == null ? defaultExecutorType : executorType;
     executorType = executorType == null ? ExecutorType.SIMPLE : executorType;
     Executor executor;
+    //批量执行executor
     if (ExecutorType.BATCH == executorType) {
       executor = new BatchExecutor(this, transaction);
+      //重新使用
     } else if (ExecutorType.REUSE == executorType) {
       executor = new ReuseExecutor(this, transaction);
     } else {
+      //简单执行器
       executor = new SimpleExecutor(this, transaction);
     }
+    //是否开启缓存
     if (cacheEnabled) {
+      //缓存执行器
       executor = new CachingExecutor(executor);
     }
+    //针对executor拦截生成动态代理
     executor = (Executor) interceptorChain.pluginAll(executor);
     return executor;
   }
@@ -703,6 +721,7 @@ public class Configuration {
   }
 
   public void addCache(Cache cache) {
+    //id 为当前命名空间
     caches.put(cache.getId(), cache);
   }
 

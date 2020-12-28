@@ -33,14 +33,23 @@ public class DynamicSqlSource implements SqlSource {
     this.rootSqlNode = rootSqlNode;
   }
 
+  /**
+   * 获取boundsql
+   * @param parameterObject 参数
+   * @return
+   */
   @Override
   public BoundSql getBoundSql(Object parameterObject) {
     DynamicContext context = new DynamicContext(configuration, parameterObject);
+    //混合 node
     rootSqlNode.apply(context);
     SqlSourceBuilder sqlSourceParser = new SqlSourceBuilder(configuration);
+    //参数类型
     Class<?> parameterType = parameterObject == null ? Object.class : parameterObject.getClass();
     SqlSource sqlSource = sqlSourceParser.parse(context.getSql(), parameterType, context.getBindings());
+    //获取boundSql
     BoundSql boundSql = sqlSource.getBoundSql(parameterObject);
+    //设置参数
     context.getBindings().forEach(boundSql::setAdditionalParameter);
     return boundSql;
   }

@@ -59,6 +59,7 @@ public class XMLIncludeTransformer {
    *          Current context for static variables with values
    */
   private void applyIncludes(Node source, final Properties variablesContext, boolean included) {
+    //执行包含
     if ("include".equals(source.getNodeName())) {
       Node toInclude = findSqlFragment(getStringAttribute(source, "refid"), variablesContext);
       Properties toIncludeContext = getVariablesContext(source, variablesContext);
@@ -91,6 +92,12 @@ public class XMLIncludeTransformer {
     }
   }
 
+  /**
+   * 查询sql片段
+   * @param refid
+   * @param variables
+   * @return
+   */
   private Node findSqlFragment(String refid, Properties variables) {
     refid = PropertyParser.parse(refid, variables);
     refid = builderAssistant.applyCurrentNamespace(refid, true);

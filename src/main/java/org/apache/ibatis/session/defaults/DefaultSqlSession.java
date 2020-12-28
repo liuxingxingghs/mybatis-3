@@ -58,6 +58,7 @@ public class DefaultSqlSession implements SqlSession {
     this.configuration = configuration;
     this.executor = executor;
     this.dirty = false;
+    //是否开启自动提交
     this.autoCommit = autoCommit;
   }
 

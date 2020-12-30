@@ -55,9 +55,15 @@ public class JdbcTransaction implements Transaction {
     this.connection = connection;
   }
 
+  /**
+   * 获取链接
+   * @return
+   * @throws SQLException
+   */
   @Override
   public Connection getConnection() throws SQLException {
     if (connection == null) {
+      //开启链接
       openConnection();
     }
     return connection;
@@ -132,14 +138,21 @@ public class JdbcTransaction implements Transaction {
     }
   }
 
+  /**
+   * 打开链接
+   * @throws SQLException
+   */
   protected void openConnection() throws SQLException {
     if (log.isDebugEnabled()) {
       log.debug("Opening JDBC Connection");
     }
+    //获取拦截
     connection = dataSource.getConnection();
     if (level != null) {
+      //设置隔离级别
       connection.setTransactionIsolation(level.getLevel());
     }
+    //设置是否自动提交
     setDesiredAutoCommit(autoCommit);
   }
 

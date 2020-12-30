@@ -45,6 +45,12 @@ public class DefaultParameterHandler implements ParameterHandler {
   private final BoundSql boundSql;
   private final Configuration configuration;
 
+  /**
+   * 构造参数处理器
+   * @param mappedStatement
+   * @param parameterObject
+   * @param boundSql
+   */
   public DefaultParameterHandler(MappedStatement mappedStatement, Object parameterObject, BoundSql boundSql) {
     this.mappedStatement = mappedStatement;
     this.configuration = mappedStatement.getConfiguration();

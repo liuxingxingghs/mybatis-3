@@ -117,6 +117,15 @@ public class DefaultResultSetHandler implements ResultSetHandler {
     }
   }
 
+  /**
+   * 生成DefaultResultSetHandler
+   * @param executor
+   * @param mappedStatement
+   * @param parameterHandler
+   * @param resultHandler
+   * @param boundSql
+   * @param rowBounds
+   */
   public DefaultResultSetHandler(Executor executor, MappedStatement mappedStatement, ParameterHandler parameterHandler, ResultHandler<?> resultHandler, BoundSql boundSql,
                                  RowBounds rowBounds) {
     this.executor = executor;

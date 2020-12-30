@@ -44,6 +44,10 @@ public class DefaultMapResultHandler<K, V> implements ResultHandler<V> {
     this.mapKey = mapKey;
   }
 
+  /**
+   *
+   * @param context
+   */
   @Override
   public void handleResult(ResultContext<? extends V> context) {
     final V value = context.getResultObject();

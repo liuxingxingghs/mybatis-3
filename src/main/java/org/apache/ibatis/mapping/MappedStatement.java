@@ -301,9 +301,17 @@ public final class MappedStatement {
     return resultSets;
   }
 
+  /**
+   * 获取boundSql
+   * @param parameterObject
+   * @return
+   */
   public BoundSql getBoundSql(Object parameterObject) {
+    //获取boundSql
     BoundSql boundSql = sqlSource.getBoundSql(parameterObject);
+    //获取参数映射对象
     List<ParameterMapping> parameterMappings = boundSql.getParameterMappings();
+    //参数为空构建一个默认的boundSql
     if (parameterMappings == null || parameterMappings.isEmpty()) {
       boundSql = new BoundSql(configuration, boundSql.getSql(), parameterMap.getParameterMappings(), parameterObject);
     }
@@ -312,8 +320,10 @@ public final class MappedStatement {
     for (ParameterMapping pm : boundSql.getParameterMappings()) {
       String rmId = pm.getResultMapId();
       if (rmId != null) {
+        //获取结果映射对象
         ResultMap rm = configuration.getResultMap(rmId);
         if (rm != null) {
+          //是否存在嵌套结构集
           hasNestedResultMaps |= rm.hasNestedResultMaps();
         }
       }

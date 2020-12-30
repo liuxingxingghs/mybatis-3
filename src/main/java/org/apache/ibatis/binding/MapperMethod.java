@@ -72,10 +72,12 @@ public class MapperMethod {
         result = rowCountResult(sqlSession.delete(command.getName(), param));
         break;
       }
+      //查询
       case SELECT:
         if (method.returnsVoid() && method.hasResultHandler()) {
           executeWithResultHandler(sqlSession, args);
           result = null;
+          //返回集合
         } else if (method.returnsMany()) {
           result = executeForMany(sqlSession, args);
         } else if (method.returnsMap()) {
@@ -137,9 +139,18 @@ public class MapperMethod {
     }
   }
 
+  /**
+   * 返回集合
+   * @param sqlSession
+   * @param args
+   * @param <E>
+   * @return
+   */
   private <E> Object executeForMany(SqlSession sqlSession, Object[] args) {
     List<E> result;
+    //参数统一封装
     Object param = method.convertArgsToSqlCommandParam(args);
+    //是否存在行范围索引
     if (method.hasRowBounds()) {
       RowBounds rowBounds = method.extractRowBounds(args);
       result = sqlSession.selectList(command.getName(), param, rowBounds);
@@ -305,6 +316,11 @@ public class MapperMethod {
       this.paramNameResolver = new ParamNameResolver(configuration, method);
     }
 
+    /**
+     * 对参数进行统一封装
+     * @param args
+     * @return
+     */
     public Object convertArgsToSqlCommandParam(Object[] args) {
       return paramNameResolver.getNamedParams(args);
     }
@@ -313,6 +329,11 @@ public class MapperMethod {
       return rowBoundsIndex != null;
     }
 
+    /**
+     * 获取行范围对象
+     * @param args
+     * @return
+     */
     public RowBounds extractRowBounds(Object[] args) {
       return hasRowBounds() ? (RowBounds) args[rowBoundsIndex] : null;
     }

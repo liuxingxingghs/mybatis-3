@@ -134,7 +134,9 @@ public class MapperAnnotationBuilder {
           continue;
         }
         if (getAnnotationWrapper(method, false, Select.class, SelectProvider.class).isPresent()
+              //返回值为map
             && method.getAnnotation(ResultMap.class) == null) {
+          //处理解决为map
           parseResultMap(method);
         }
         try {
@@ -149,6 +151,7 @@ public class MapperAnnotationBuilder {
 
   private boolean canHaveStatement(Method method) {
     // issue #237
+    //不是泛型并且不是抽象方法
     return !method.isBridge() && !method.isDefault();
   }
 
@@ -243,7 +246,9 @@ public class MapperAnnotationBuilder {
 
   private String parseResultMap(Method method) {
     Class<?> returnType = getReturnType(method);
+    //获取参数结合注解
     Arg[] args = method.getAnnotationsByType(Arg.class);
+    //获取结果注解
     Result[] results = method.getAnnotationsByType(Result.class);
     TypeDiscriminator typeDiscriminator = method.getAnnotation(TypeDiscriminator.class);
     String resultMapId = generateResultMapName(method);
@@ -251,7 +256,13 @@ public class MapperAnnotationBuilder {
     return resultMapId;
   }
 
+  /**
+   * 返回唯一id
+   * @param method
+   * @return
+   */
   private String generateResultMapName(Method method) {
+    //结果注解不为空
     Results results = method.getAnnotation(Results.class);
     if (results != null && !results.id().isEmpty()) {
       return type.getName() + "." + results.id();
@@ -264,6 +275,7 @@ public class MapperAnnotationBuilder {
     if (suffix.length() < 1) {
       suffix.append("-void");
     }
+    //接口名 + 方法名 + 参数类型拼接
     return type.getName() + "." + method.getName() + suffix;
   }
 
@@ -434,6 +446,7 @@ public class MapperAnnotationBuilder {
         returnType = returnType.getComponentType();
       }
       // gcode issue #508
+      //返回值为void时也可以指定resultType 来获取返回值
       if (void.class.equals(returnType)) {
         ResultType rt = method.getAnnotation(ResultType.class);
         if (rt != null) {
@@ -444,7 +457,9 @@ public class MapperAnnotationBuilder {
       ParameterizedType parameterizedType = (ParameterizedType) resolvedReturnType;
       Class<?> rawType = (Class<?>) parameterizedType.getRawType();
       if (Collection.class.isAssignableFrom(rawType) || Cursor.class.isAssignableFrom(rawType)) {
+        //如果是集合类参数
         Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
+        //长度为1 并且不为空
         if (actualTypeArguments != null && actualTypeArguments.length == 1) {
           Type returnTypeParameter = actualTypeArguments[0];
           if (returnTypeParameter instanceof Class<?>) {
@@ -458,6 +473,7 @@ public class MapperAnnotationBuilder {
             returnType = Array.newInstance(componentType, 0).getClass();
           }
         }
+        //存在mapkey注解
       } else if (method.isAnnotationPresent(MapKey.class) && Map.class.isAssignableFrom(rawType)) {
         // (gcode issue 504) Do not look into Maps if there is not MapKey annotation
         Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
@@ -470,6 +486,7 @@ public class MapperAnnotationBuilder {
             returnType = (Class<?>) ((ParameterizedType) returnTypeParameter).getRawType();
           }
         }
+        //如果是Optional
       } else if (Optional.class.equals(rawType)) {
         Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
         Type returnTypeParameter = actualTypeArguments[0];
@@ -648,6 +665,13 @@ public class MapperAnnotationBuilder {
     return new ProviderSqlSource(assistant.getConfiguration(), annotation, type, method);
   }
 
+  /**
+   *  构造sqlSource
+   * @param strings
+   * @param parameterTypeClass
+   * @param languageDriver
+   * @return
+   */
   private SqlSource buildSqlSourceFromStrings(String[] strings, Class<?> parameterTypeClass,
       LanguageDriver languageDriver) {
     return languageDriver.createSqlSource(configuration, String.join(" ", strings).trim(), parameterTypeClass);
@@ -671,9 +695,12 @@ public class MapperAnnotationBuilder {
         }));
     AnnotationWrapper annotationWrapper = null;
     if (databaseId != null) {
+      //通过databaseId 获取包装类
       annotationWrapper = statementAnnotations.get(databaseId);
     }
+    //为空 说明不存在绑定的数据id
     if (annotationWrapper == null) {
+      //获取默认值
       annotationWrapper = statementAnnotations.get("");
     }
     if (errorIfNoMatch && annotationWrapper == null && !statementAnnotations.isEmpty()) {
@@ -683,6 +710,7 @@ public class MapperAnnotationBuilder {
               "Could not find a statement annotation that correspond a current database or default statement on method '%s.%s'. Current database id is [%s].",
               method.getDeclaringClass().getName(), method.getName(), databaseId));
     }
+    //返回Optional
     return Optional.ofNullable(annotationWrapper);
   }
 

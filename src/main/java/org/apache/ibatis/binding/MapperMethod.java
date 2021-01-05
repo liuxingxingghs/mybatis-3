@@ -39,6 +39,7 @@ import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
 
 /**
+ * 执行方法
  * @author Clinton Begin
  * @author Eduardo Macarron
  * @author Lasse Voss
@@ -49,11 +50,23 @@ public class MapperMethod {
   private final SqlCommand command;
   private final MethodSignature method;
 
+  /**
+   * 构造方法
+   * @param mapperInterface
+   * @param method
+   * @param config
+   */
   public MapperMethod(Class<?> mapperInterface, Method method, Configuration config) {
     this.command = new SqlCommand(config, mapperInterface, method);
     this.method = new MethodSignature(config, mapperInterface, method);
   }
 
+  /**
+   * 方法执行
+   * @param sqlSession
+   * @param args
+   * @return
+   */
   public Object execute(SqlSession sqlSession, Object[] args) {
     Object result;
     switch (command.getType()) {
